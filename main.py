@@ -13,13 +13,16 @@ def remove_bg():
     file = request.files["image"]
 
     try:
-        # Read image
         input_image = file.read()
 
-        # Remove background using rembg
+        # file size limit (5MB)
+        if len(input_image) > 5_000_000:
+            return jsonify({"error": "File too large"}), 400
+
+        # remove background
         output_image = remove(input_image)
 
-        # Convert to file-like object
+        # convert to response stream
         img_io = io.BytesIO(output_image)
         img_io.seek(0)
 
